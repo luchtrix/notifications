@@ -1,32 +1,81 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Web Notifications API Demo</title>
-    <link rel="stylesheet" type="text/css" href="css/estilos.css">
-    <script type="text/javascript" src="cordova.js"></script>
-  </head>
-  <body>
-    <h1>Web Notifications API</h1>
-    <span id="wn-unsupported" class="hidden">API not supported</span>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Notify.js demo --> Lucho 58</title>
+<meta name="description" content="" />
+<meta name="author" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<style>
+	button {
+			width: 100px;
+			height: 44px;
+	}
+</style>
 
-    <form id="custom-notification" action="">
-      <label for="title">Title:</label>
-      <input type="text" id="title" name="title" />
+</head>
+<body>
+  <h1>Notify.js demo</h1>
+  <p>Notify.js is a simple wrapper for the Web Notification API. The GitHub repo is <a href="https://github.com/alexgibson/notify.js">here</a>.</p>
+  <p>Click the button below to fire up a notification. Currently supported in Chrome, Safari, Firefox and Firefox OS.</p>
+  <button id="my-button">Notify Me!</button>
 
-      <label for="body">Body:</label>
-      <textarea id="body" name="body"></textarea>
+  <!-- JavaScript assets -->
+  <!--script src="../dist/notify.js"></script-->
+    <script src="js/notify.js"></script>
+    <!--script src="cordova.js"></script-->
+  <script>
+    document.getElementById('my-button').addEventListener('click', function () {
 
-      <div class="buttons-wrapper">
-        <button id="button-wn-show-preset" class="button-demo">Show Preset Notification</button>
-        <input type="submit" id="button-wn-show-custom" class="button-demo" value="Show Custom Notification" />
-      </div>
-    </form>
+        function onShowNotification () {
+            console.log('notification is shown!');
+        }
 
-    <h3>Log</h3>
-    <div id="log"></div>
-    <button id="clear-log" class="button-demo">Clear log</button>
-    <script type="text/javascript" src="js/script.js"></script>
-  </body>
+        function onCloseNotification () {
+            console.log('notification is closed!');
+        }
+
+        function onClickNotification () {
+            console.log('notification was clicked!');
+        }
+
+        function onErrorNotification () {
+            console.error('Error showing notification. You may need to request permission.');
+        }
+
+        function onPermissionGranted () {
+            console.log('Permission has been granted by the user');
+            doNotification();
+        }
+
+        function onPermissionDenied () {
+            console.warn('Permission has been denied by the user');
+        }
+
+        var Notify = window.Notify.default;
+
+        function doNotification () {
+            var myNotification = new Notify('Yo dawg!', {
+                body: 'This is an awesome notification',
+                tag: 'My unique id',
+                notifyShow: onShowNotification,
+                notifyClose: onCloseNotification,
+                notifyClick: onClickNotification,
+                notifyError: onErrorNotification,
+                timeout: 4
+            });
+
+            myNotification.show();
+        }
+
+        if (!Notify.needsPermission) {
+            doNotification();
+        } else if (Notify.isSupported()) {
+            Notify.requestPermission(onPermissionGranted, onPermissionDenied);
+        }
+
+    }, false);
+  </script>
+</body>
 </html>
